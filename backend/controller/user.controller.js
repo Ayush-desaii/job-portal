@@ -1,4 +1,4 @@
-import { User } from "../models/user.model";
+import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -47,14 +47,14 @@ export const login = async (req,res) => {
                 success:false
             })
         }
-        let user = User.findOne({email});
+        let user = await User.findOne({email});
         if (!user){
             return res.status(400).json({
                 message:"user not found register first",
                 success:false
             })
         }
-        const isPasswordMatch = bcrypt.compare(password, user.password);
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch){
             return res.status(400).json({
                 message:"incorrect password",
@@ -103,16 +103,14 @@ export const logout = async (req,res) => {
     }
 }
 
-export const updateprofile = async (req,res) => {
+export const updateProfile = async (req,res) => {
     try {
         const {fullName, email, phoneNumber, bio, skills} = req.body;
-        if (!fullName || !email || !phoneNumber || !bio || !skills) {
-            return res.status(400).json({
-                message:"something is wrong",
-                success:false
-            })
+        
+        let skillArray;
+        if(skills){
+            skillArray = skills.split(",");
         }
-        const skillArray = skills.split(",");
         const userId = req.id;
         let user = await User.findById(userId);
 
@@ -123,11 +121,11 @@ export const updateprofile = async (req,res) => {
             })
         }
 
-        user.fullName = fullName,
-        user.email = email,
-        user.phoneNumber = phoneNumber,
-        user.profile.bio = bio,
-        user.profile.skills = skillArray
+        if(fullName) user.fullName = fullName
+        if(email) user.email = email
+        if(phoneNumber) user.phoneNumber = phoneNumber
+        if(bio) user.profile.bio = bio
+        if(skillArray) user.profile.skills = skillArray
 
         await user.save();
 

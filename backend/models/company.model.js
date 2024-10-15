@@ -2,23 +2,23 @@ import mongoose from "mongoose";
 
 const companySchema = mongoose.Schema({
     name: {
-        Type: String,
+        type: String,
         required: true
     }, 
     description: {
-        Type: String
+        type: String
     },
     website: {
-        Type: String
+        type: String
     },
     location: {
-        Type: String
+        type: String
     },
     logo: {
-        Type: String
+        type: String
     },
     userId: {
-        Type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId, 
         ref:'User',
         required: true
     },
